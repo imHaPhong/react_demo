@@ -29827,6 +29827,45 @@ video {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.placeholder-italic::placeholder{
+  font-style: italic
+}
+
+.checked input:checked ~ span {
+  --tw-bg-opacity: 1;
+  background-color: rgba(248, 113, 113, var(--tw-bg-opacity))
+}
+
+.todo-footer::after,.todo-footer::before
+  {
+  content: '';
+  position: absolute;
+  z-index: -2;
+  bottom: -10px;
+  left: 50%;
+  width: 98%;
+  height: 30px;
+  overflow: hidden;
+  border-width: 2px;
+  transform: translateX(-50%)
+}
+
+.todo-footer::before
+  {
+  z-index: -1;
+  bottom: -5px;
+  width: 99%;
+}
+
+.hover-todos > li {
+  cursor: pointer;
+}
+
+.hover-todos > li:hover{
+  --tw-border-opacity: 1;
+  border-color: rgba(254, 226, 226, var(--tw-border-opacity))
+}
+
 @media (min-width: 640px) {
   .sm\:container {
     width: 100%;
