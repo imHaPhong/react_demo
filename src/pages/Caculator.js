@@ -6,6 +6,7 @@ const operators = ["+", "-", "*", "/"]
 
 function Caculator() {
     const { listOperator, isCalculate, result, display,currentValue } = useSelector(state => state.value)
+    console.log(listOperator)
     const dispatch = useDispatch()
 
     const clickHandler = (data) => {
@@ -48,13 +49,13 @@ function Caculator() {
 
     return (
         <div className="flex items-center justify-center bg-gray-400 w-screen h-screen">
-            <div className="bg-black px-1 py-1 w-10/12 container sm:w-6/12 md:w-6/12 lg:w-6/12 xl:w-2/12 ">
+            <div className="bg-black px-1 py-1 w-10/12 container sm:w-6/12 md:w-6/12 lg:w-6/12 xl:w-3/12 ">
                 <div className="w-full bg-black text-yellow-200 flex flex-col items-end slashed-zero text-2xl">
                     <div className="py-1 text-xl">
-                        {!isCalculate ? display || 0 : `${display} = ${result}`}
+                       { listOperator.toString().replaceAll(',', '') || 0}
                     </div>
                     <div className="py-1 text-white">
-                        {result ? result : currentValue === ""? 0 : currentValue }
+                        {listOperator[listOperator.length - 1] || 0}
                     </div>
                 </div>
                 <div className="grid grid-cols-4 auto-rows-min grid-flow-row	">

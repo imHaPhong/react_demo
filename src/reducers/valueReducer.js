@@ -7,77 +7,94 @@ const intialSate = {
     currentValue: ""
 }
 
+const calculation = (a) => {
+
+    if(a.length === 1) {
+        return a
+    }
+
+    if(a.length === 2) {
+        if(a[a.length- 1].includes('-')) {
+             a[0] = Number(a[0]) + Number(a[1])
+            a.splice(1, 1);
+            return
+        }
+    }
+
+    for (let i = 0; i < a.length; i++) {
+            if (a[i] == "*") {
+                a[i - 1] = Number(a[i - 1] * a[i + 1])
+                a.splice(i, 1);
+                a.splice(i, 1);
+
+            }
+            if (a[i] === "/") {
+                a[i - 1] = Number(a[i - 1] / a[i + 1])
+                a.splice(i, 1);
+                a.splice(i, 1);
+            }
+    }
+    for (let i = 0; i < a.length; i++) {
+
+        if (a[i] == "+") {
+            a[i - 1] = Number(a[i - 1]) + Number(a[i + 1])
+            a.splice(i, 1);
+            a.splice(i, 1);
+
+        }
+        if (a[i] === "-") {
+            a[i - 1] = Number(a[i - 1]) - Number(a[i + 1])
+            a.splice(i, 1);
+            a.splice(i, 1);
+        }
+    }
+    if (a.length > 1) {
+        calculation(a)
+    } else {
+        return a
+    }
+}
+
 export const valueReducer = (state = intialSate, action) => {
     return produce(state, draft => {
         switch (action.type) {
-            case "changeLastElement":
-                draft.listOperator.pop()
-                draft.listOperator = [...draft.listOperator, action.payload]
-                let str1 = ''
-                draft.listOperator.map(el => str1 += el)
-                draft.display = str1
-                draft.currentValue = action.payload
-                break
-            case "changeSecondElement":
-                draft.listOperator.pop()
-                draft.listOperator.pop()
-                draft.listOperator = [...draft.listOperator, action.payload]
-                let str2 = ''
-                draft.listOperator.map(el => str2 += el)
-                draft.display = str2
-                draft.currentValue = action.payload
-
-                break
             case "addElement":
-                if (draft.result !== "") {
-                    if (typeof (action.payload) === "number") {
-                        draft.listOperator =  [action.payload]
-                        draft.display = action.payload
-                        draft.currentValue = action.payload
-                        draft.isCalculate = false
-                        draft.result = ""
-                        
-                    } else {
-                        draft.listOperator = [draft.result, action.payload]
-                        draft.display = `${draft.result} ${action.payload}`
-                        draft.currentValue = draft.result
-                        draft.isCalculate = false
-                        draft.result = ""
-                    }
-                    return
+                let str = ""
+                if(draft.isCalculate) {
+                    draft.isCalculate = false
+                    if(["+", "-", "*", "/"].includes(action.payload)) {
+                        draft.listOperator = [draft.listOperator[draft.listOperator.length - 1], action.payload]
+                        return
+                    } 
+                     draft.listOperator = [action.payload]
+                     
+
+                     return
                 }
 
-                if(["+", "-", "*", "/"].includes(action.payload) || ["+", "-", "*", "/"].includes(draft.listOperator[draft.listOperator.length -1])) {
-                    draft.currentValue = action.payload
-                }else {
-                    draft.currentValue += (action.payload).toString()
+                if(!["+", "-", "*", "/"].includes(action.payload) &&  draft.listOperator[draft.listOperator.length - 1] === "-") {
+                    draft.listOperator[draft.listOperator.length - 1] = `${draft.listOperator[draft.listOperator.length - 1]}${action.payload}`
+                    return 
                 }
-                let str = ''
-                draft.listOperator = [...draft.listOperator, action.payload]
-                draft.listOperator.map(el => str += el)
-                console.log(str)
-                draft.display = str
-                console.log('----')
+
+                if (!["+", "-", "*", "/"].includes(action.payload) && draft.listOperator.length > 0 && !["+", "-", "*", "/"].includes(draft.listOperator[draft.listOperator.length - 1])) {
+                    draft.listOperator[draft.listOperator.length - 1] = `${draft.listOperator[draft.listOperator.length - 1]}${action.payload}`
+                }
+                else {
+                    draft.listOperator = draft.listOperator.concat(action.payload)
+                }
                 break
             case "caculate":
-                if (typeof (draft.listOperator[0]) !== "number") {
-                    draft.listOperator.unshift(0)
-                }
-                let caculateStr = ""
-                draft.listOperator.map(el => caculateStr += el)
-                draft.result = eval(caculateStr)
+                draft.result = calculation(draft.listOperator)
                 draft.isCalculate = true
                 break
-            case "setResult":
-                draft.listOperator.concat(action.payload)
-                break
-            case "reset":
-                draft.listOperator = []
-                draft.isCalculate = false
-                draft.result = ""
-                draft.display = ""
-                draft.currentValue = ""
-                break
+                case "reset":
+                    draft.listOperator = []
+                    draft.isCalculate = false
+                    draft.result = ""
+                    draft.display = ""
+                    draft.currentValue = ""
+                    break
             default:
                 break
         }
